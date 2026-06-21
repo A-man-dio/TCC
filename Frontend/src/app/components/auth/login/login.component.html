@@ -1,0 +1,81 @@
+<div class="auth-page">
+
+  <div class="auth-brand">
+    <div class="brand-icon-wrap">
+      <mat-icon>radiology</mat-icon>
+    </div>
+    <div class="brand-text">
+      <h1>Sistema de Diagnóstico por Raio-X</h1>
+      <p>Análise de imagens médicas com inteligência artificial</p>
+    </div>
+  </div>
+
+  <div class="auth-card">
+    <div class="card-header">
+      <h2>Bem-vindo de volta</h2>
+      <p>Entre com as suas credenciais para continuar</p>
+    </div>
+
+    @if (error()) {
+      <div class="error-banner">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form" novalidate>
+
+      <div class="form-field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="medico@hospital.ao"
+          autocomplete="email"
+          [class.invalid]="form.get('email')!.invalid && form.get('email')!.touched"
+        />
+        @if (form.get('email')!.invalid && form.get('email')!.touched) {
+          <span class="field-error">Email inválido</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="senha">Senha</label>
+        <div class="input-wrap">
+          <input
+            id="senha"
+            [type]="showPass() ? 'text' : 'password'"
+            formControlName="senha"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            [class.invalid]="form.get('senha')!.invalid && form.get('senha')!.touched"
+          />
+          <button type="button" class="toggle-pass" (click)="togglePass()" tabindex="-1">
+            <mat-icon>{{ showPass() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
+        @if (form.get('senha')!.invalid && form.get('senha')!.touched) {
+          <span class="field-error">Mínimo 6 caracteres</span>
+        }
+      </div>
+
+      <button type="submit" class="submit-btn" [disabled]="form.invalid || isLoading()">
+        @if (isLoading()) {
+          <span class="spinner"></span>
+          A entrar…
+        } @else {
+          <mat-icon>login</mat-icon>
+          Entrar
+        }
+      </button>
+
+    </form>
+
+    <p class="auth-link">
+      Não tem conta?
+      <a routerLink="/registar">Registar-se</a>
+    </p>
+  </div>
+
+</div>

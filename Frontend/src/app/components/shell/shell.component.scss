@@ -1,0 +1,245 @@
+/* ── App Shell ── */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-void);
+}
+
+/* ── Header ── */
+.app-header {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--cyan) 30%,
+      var(--violet) 70%,
+      transparent 100%
+    );
+    opacity: 0.45;
+  }
+}
+
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-icon-wrap {
+  width: 42px;
+  height: 42px;
+  background: var(--cyan-glow);
+  border: 1px solid rgba(0, 212, 239, 0.25);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    color: var(--cyan);
+  }
+}
+
+.brand-text {
+  h1 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.1;
+    letter-spacing: -0.2px;
+  }
+
+  p {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    letter-spacing: 0.4px;
+  }
+}
+
+/* ── Header right ── */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 212, 239, 0.05);
+  border: 1px solid rgba(0, 212, 239, 0.15);
+  border-radius: 20px;
+  padding: 6px 14px 6px 10px;
+
+  .user-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--cyan);
+    flex-shrink: 0;
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .user-nome {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .user-role {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--cyan);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+}
+
+.logout-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border-bright);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: rgba(255, 70, 85, 0.08);
+    border-color: rgba(255, 70, 85, 0.3);
+    color: var(--red);
+  }
+}
+
+/* ── Main ── */
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .main-tabs {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    ::ng-deep .mat-mdc-tab-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    ::ng-deep .mat-mdc-tab-label-container {
+      max-width: calc(1280px + 64px);
+      margin: 0 auto;
+      padding: 0 32px;
+      box-sizing: border-box;
+    }
+
+    ::ng-deep .mdc-tab {
+      padding: 0 24px;
+      min-width: 140px;
+    }
+
+    ::ng-deep .mat-mdc-tab-body-wrapper {
+      flex: 1;
+    }
+
+    ::ng-deep .mat-mdc-tab-body-content {
+      height: 100%;
+    }
+  }
+}
+
+.tab-icon {
+  margin-right: 8px;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Footer ── */
+.app-footer {
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  padding: 10px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: var(--amber);
+    opacity: 0.8;
+  }
+
+  strong {
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .header-inner {
+    padding: 14px 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .brand-text h1 { font-size: 0.95rem; }
+
+  .user-info { display: none; }
+}

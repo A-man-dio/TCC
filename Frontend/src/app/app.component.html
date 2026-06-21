@@ -1,0 +1,54 @@
+<div class="app-shell">
+
+  <!-- ── Header ── -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon-wrap">
+          <mat-icon>radiology</mat-icon>
+        </div>
+        <div class="brand-text">
+          <h1>Sistema de Diagnóstico por Raio-X</h1>
+          <p>Análise de imagens médicas com inteligência artificial</p>
+        </div>
+      </div>
+      <div class="header-badge">
+        <span class="online-dot"></span>
+        <span>IA Médica · Demo</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main ── -->
+  <main class="app-main">
+    <mat-tab-group class="main-tabs" animationDuration="250ms" [disableRipple]="false">
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">document_scanner</mat-icon>
+          Triagem
+        </ng-template>
+        <app-triagem />
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">biotech</mat-icon>
+          Diagnóstico
+        </ng-template>
+        <app-diagnostico />
+      </mat-tab>
+
+    </mat-tab-group>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="app-footer">
+    <mat-icon>info</mat-icon>
+    <span>
+      Sistema de uso <strong>demonstrativo</strong> — resultados simulados.
+      Consulte sempre um profissional médico qualificado.
+    </span>
+  </footer>
+
+</div>

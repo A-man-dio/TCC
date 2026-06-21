@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx --version)",
+      "Bash(uvx --version)",
+      "PowerShell(winget install *)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Ernesto\\\\Desktop\\\\EINF9\\\\Trabalho Final de Curso\\\\Frontend\\\\src\" -Recurse | Where-Object { -not $_.PSIsContainer } | Select-Object FullName | Format-Table -AutoSize)",
+      "PowerShell(npm *)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Ernesto\\\\Desktop\\\\EINF9\\\\Trabalho Final de Curso\\\\modelo IA\\\\torchxrayvision-main\" -Recurse -Depth 2 | Where-Object { -not $_.PSIsContainer } | Select-Object FullName | Format-Table -AutoSize)",
+      "PowerShell(Stop-Process *)",
+      "Bash(python -c \"import docx; print\\('python-docx OK'\\)\")",
+      "Bash(pip install *)",
+      "Bash(python gerar_doc_seguranca.py)",
+      "Bash(python *)"
+    ]
+  }
+}

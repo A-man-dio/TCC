@@ -1,0 +1,111 @@
+<div class="auth-page">
+
+  <div class="auth-brand">
+    <div class="brand-icon-wrap">
+      <mat-icon>radiology</mat-icon>
+    </div>
+    <div class="brand-text">
+      <h1>Sistema de Diagnóstico por Raio-X</h1>
+      <p>Análise de imagens médicas com inteligência artificial</p>
+    </div>
+  </div>
+
+  <div class="auth-card">
+    <div class="card-header">
+      <h2>Criar conta</h2>
+      <p>Preencha os seus dados para aceder ao sistema</p>
+    </div>
+
+    @if (error()) {
+      <div class="error-banner">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form" novalidate>
+
+      <div class="form-field">
+        <label for="nome">Nome completo</label>
+        <input
+          id="nome"
+          type="text"
+          formControlName="nome"
+          placeholder="Dr. João Silva"
+          autocomplete="name"
+          [class.invalid]="form.get('nome')!.invalid && form.get('nome')!.touched"
+        />
+        @if (form.get('nome')!.invalid && form.get('nome')!.touched) {
+          <span class="field-error">Nome deve ter pelo menos 3 caracteres</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="medico@hospital.ao"
+          autocomplete="email"
+          [class.invalid]="form.get('email')!.invalid && form.get('email')!.touched"
+        />
+        @if (form.get('email')!.invalid && form.get('email')!.touched) {
+          <span class="field-error">Email inválido</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="senha">Senha</label>
+        <div class="input-wrap">
+          <input
+            id="senha"
+            [type]="showPass() ? 'text' : 'password'"
+            formControlName="senha"
+            placeholder="••••••••"
+            autocomplete="new-password"
+            [class.invalid]="form.get('senha')!.invalid && form.get('senha')!.touched"
+          />
+          <button type="button" class="toggle-pass" (click)="togglePass()" tabindex="-1">
+            <mat-icon>{{ showPass() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
+        @if (form.get('senha')!.invalid && form.get('senha')!.touched) {
+          <span class="field-error">Mínimo 6 caracteres</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="confirma">Confirmar senha</label>
+        <input
+          id="confirma"
+          [type]="showPass() ? 'text' : 'password'"
+          formControlName="confirma"
+          placeholder="••••••••"
+          autocomplete="new-password"
+          [class.invalid]="form.hasError('passwordMismatch') && form.get('confirma')!.touched"
+        />
+        @if (form.hasError('passwordMismatch') && form.get('confirma')!.touched) {
+          <span class="field-error">As senhas não coincidem</span>
+        }
+      </div>
+
+      <button type="submit" class="submit-btn violet" [disabled]="form.invalid || isLoading()">
+        @if (isLoading()) {
+          <span class="spinner"></span>
+          A registar…
+        } @else {
+          <mat-icon>person_add</mat-icon>
+          Criar conta
+        }
+      </button>
+
+    </form>
+
+    <p class="auth-link">
+      Já tem conta?
+      <a routerLink="/login">Entrar</a>
+    </p>
+  </div>
+
+</div>

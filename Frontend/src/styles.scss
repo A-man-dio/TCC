@@ -1,0 +1,117 @@
+/* ── Design Tokens ── */
+:root {
+  /* Backgrounds */
+  --bg-void:     #06091A;
+  --bg-surface:  #0B1020;
+  --bg-elevated: #101726;
+  --bg-overlay:  #162035;
+
+  /* Borders */
+  --border:        rgba(255, 255, 255, 0.06);
+  --border-bright: rgba(255, 255, 255, 0.12);
+
+  /* Triagem accent — cyan */
+  --cyan:            #00D4EF;
+  --cyan-dim:        #0097AB;
+  --cyan-glow:       rgba(0, 212, 239, 0.10);
+  --cyan-glow-md:    rgba(0, 212, 239, 0.20);
+  --cyan-glow-str:   rgba(0, 212, 239, 0.35);
+
+  /* Diagnóstico accent — violet */
+  --violet:          #9D6FFF;
+  --violet-dim:      #6D28D9;
+  --violet-glow:     rgba(157, 111, 255, 0.10);
+  --violet-glow-md:  rgba(157, 111, 255, 0.20);
+  --violet-glow-str: rgba(157, 111, 255, 0.35);
+
+  /* Semantic */
+  --green:        #00E5A0;
+  --green-dim:    #059669;
+  --green-bg:     rgba(0, 229, 160, 0.08);
+  --green-border: rgba(0, 229, 160, 0.22);
+  --red:          #FF4655;
+  --red-dim:      #DC2626;
+  --red-bg:       rgba(255, 70, 85, 0.08);
+  --red-border:   rgba(255, 70, 85, 0.22);
+  --amber:        #FFB020;
+  --amber-bg:     rgba(255, 176, 32, 0.08);
+  --amber-border: rgba(255, 176, 32, 0.22);
+  --orange:       #FF7E3D;
+  --orange-bg:    rgba(255, 126, 61, 0.08);
+  --orange-border:rgba(255, 126, 61, 0.22);
+
+  /* Text */
+  --text-primary:   #EDF2FF;
+  --text-secondary: #5E80A4;
+  --text-muted:     #2D4566;
+
+  /* Fonts */
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-body);
+  background: var(--bg-void);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Angular Material Overrides ── */
+.mat-mdc-tab-group {
+  --mdc-tab-indicator-active-indicator-color: var(--cyan);
+  --mat-tab-header-active-label-text-color: var(--cyan);
+  --mat-tab-header-inactive-label-text-color: var(--text-secondary);
+  --mat-tab-header-active-hover-label-text-color: var(--cyan);
+  --mat-tab-header-active-focus-label-text-color: var(--cyan);
+}
+
+.mat-mdc-tab-header {
+  background: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.mat-mdc-tab .mdc-tab__text-label {
+  color: var(--text-secondary) !important;
+  transition: color 0.2s;
+}
+
+.mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+  color: var(--cyan) !important;
+}
+
+.mat-mdc-tab-body-wrapper {
+  flex: 1;
+}
+
+.mat-mdc-progress-bar {
+  --mdc-linear-progress-active-indicator-color: var(--cyan);
+  --mdc-linear-progress-track-color: var(--bg-overlay);
+}
+
+/* ── Utility ── */
+.hidden-input { display: none; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-surface); }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

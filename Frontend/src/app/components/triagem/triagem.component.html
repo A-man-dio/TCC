@@ -1,0 +1,262 @@
+<div class="tab-content">
+  <div class="panel-grid">
+
+    <!-- ── Left: Image Panel ── -->
+    <div class="panel image-panel">
+      <div class="panel-header">
+        <mat-icon class="panel-icon">image_search</mat-icon>
+        <div>
+          <h2>Imagem de Raio-X</h2>
+          <p>Carregue uma imagem para triagem</p>
+        </div>
+      </div>
+
+      <div class="panel-body">
+
+        @if (!selectedImage()) {
+          <!-- Upload Zone -->
+          <div
+            class="upload-zone"
+            [class.dragging]="isDragging()"
+            (click)="triggerFileInput()"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave()"
+            (drop)="onDrop($event)"
+          >
+            <input
+              type="file"
+              #fileInput
+              accept="image/png,image/jpeg,image/jpg"
+              class="hidden-input"
+              (change)="onFileSelected($event)"
+            />
+            <div class="upload-icon-wrap">
+              <mat-icon>cloud_upload</mat-icon>
+            </div>
+            <p class="upload-title">Arraste a imagem aqui</p>
+            <p class="upload-sub">ou <span class="link">clique para selecionar</span></p>
+            <div class="upload-formats">
+              <span>PNG</span><span>JPG</span><span>JPEG</span>
+              <span class="sep">·</span>
+              <span>Máx. 10 MB</span>
+            </div>
+          </div>
+        } @else {
+          <!-- Image Preview -->
+          <div class="image-frame">
+            <div class="image-wrapper">
+              <img [src]="selectedImage()" alt="Raio-X" class="xray-image" />
+            </div>
+            @if (isAnalyzing()) {
+              <div class="scan-beam"></div>
+              <div class="scan-overlay">
+                <div class="scan-label">
+                  <mat-icon>radar</mat-icon>
+                  A processar...
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="image-actions">
+            <button
+              mat-stroked-button
+              class="btn-secondary"
+              (click)="triggerChangeInput()"
+              [disabled]="isAnalyzing()"
+            >
+              <mat-icon>swap_horiz</mat-icon>
+              Alterar Imagem
+            </button>
+            <input
+              type="file"
+              #changeInput
+              accept="image/png,image/jpeg,image/jpg"
+              class="hidden-input"
+              (change)="onFileSelected($event)"
+            />
+
+            @if (!isAnalyzing() && !result()) {
+              <button mat-flat-button class="btn-analyze" (click)="analyze()">
+                <mat-icon>analytics</mat-icon>
+                Analisar Triagem
+              </button>
+            }
+
+            @if (result() || error()) {
+              <button mat-stroked-button class="btn-reset" (click)="reset()">
+                <mat-icon>refresh</mat-icon>
+                Nova Análise
+              </button>
+            }
+          </div>
+        }
+
+      </div>
+    </div>
+
+    <!-- ── Right: Results Panel ── -->
+    <div class="panel results-panel">
+      <div class="panel-header">
+        <mat-icon class="panel-icon">assignment_turned_in</mat-icon>
+        <div>
+          <h2>Resultado da Triagem</h2>
+          <p>Classificação preliminar da imagem</p>
+        </div>
+      </div>
+
+      <div class="panel-body">
+
+        <!-- Loading -->
+        @if (isAnalyzing()) {
+          <div class="loading-state" @fadeSlideIn>
+            <div class="pulse-container">
+              <div class="pulse-ring ring-1"></div>
+              <div class="pulse-ring ring-2"></div>
+              <mat-icon class="loading-icon">radar</mat-icon>
+            </div>
+            <p class="loading-title">A analisar a imagem</p>
+            <p class="loading-sub">Processando padrões e características...</p>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
+        }
+
+        <!-- Result -->
+        @if (result() && !isAnalyzing()) {
+          <div class="result-container" @fadeSlideIn>
+
+            <!-- Status Badge -->
+            <div
+              class="status-badge"
+              [class.status-normal]="result()!.status === 'Normal'"
+              [class.status-anomalo]="result()!.status === 'Anômalo'"
+            >
+              <mat-icon class="status-icon">
+                {{ result()!.status === 'Normal' ? 'check_circle' : 'error' }}
+              </mat-icon>
+              <div class="status-text">
+                <span class="status-label">{{ result()!.status }}</span>
+                <span class="status-desc">
+                  {{ result()!.status === 'Normal' ? 'Sem anomalias detectadas' : 'Anomalia identificada' }}
+                </span>
+              </div>
+              <div class="confidence-pill">{{ result()!.confidence }}%</div>
+            </div>
+
+            <!-- Detail Table -->
+            <div class="detail-grid">
+              <div class="detail-item">
+                <mat-icon>speed</mat-icon>
+                <div>
+                  <span class="detail-label">Confiança</span>
+                  <span class="detail-value accent">{{ result()!.confidence }}%</span>
+                </div>
+              </div>
+              <div class="detail-item">
+                <mat-icon>calendar_today</mat-icon>
+                <div>
+                  <span class="detail-label">Data</span>
+                  <span class="detail-value">{{ result()!.timestamp | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </div>
+              <div class="detail-item">
+                <mat-icon>schedule</mat-icon>
+                <div>
+                  <span class="detail-label">Hora</span>
+                  <span class="detail-value">{{ result()!.timestamp | date:'HH:mm:ss' }}</span>
+                </div>
+              </div>
+              <div class="detail-item">
+                <mat-icon>medical_services</mat-icon>
+                <div>
+                  <span class="detail-label">Tipo</span>
+                  <span class="detail-value">Triagem Inicial</span>
+                </div>
+              </div>
+            </div>
+
+            @if (result()!.status === 'Anômalo') {
+              <div class="recommendation">
+                <mat-icon>arrow_forward</mat-icon>
+                <p>Recomenda-se prosseguir para análise detalhada no separador <strong>Diagnóstico</strong>.</p>
+              </div>
+            }
+
+            <!-- Feedback -->
+            @if (!feedbackSubmitted()) {
+              <div class="feedback-section">
+                <button
+                  class="feedback-trigger"
+                  [class.active]="showFeedback()"
+                  (click)="toggleFeedback()"
+                >
+                  <mat-icon>feedback</mat-icon>
+                  <span>Acha que a previsão está errada?</span>
+                  <mat-icon class="chevron">{{ showFeedback() ? 'expand_less' : 'expand_more' }}</mat-icon>
+                </button>
+
+                @if (showFeedback()) {
+                  <div class="feedback-panel" @slideDown>
+                    <p class="feedback-question">
+                      Considera o resultado
+                      <span
+                        class="correction-label"
+                        [class.label-normal]="suggestedCorrection() === 'Normal'"
+                        [class.label-anomalo]="suggestedCorrection() === 'Anômalo'"
+                      >
+                        <mat-icon>{{ suggestedCorrection() === 'Normal' ? 'check_circle' : 'error' }}</mat-icon>
+                        {{ suggestedCorrection() }}
+                      </span>
+                      ?
+                    </p>
+                    <div class="feedback-confirm-actions">
+                      <button mat-flat-button class="btn-confirm-yes" (click)="confirmFeedback()">
+                        <mat-icon>thumb_up</mat-icon>
+                        Sim, enviar feedback
+                      </button>
+                      <button mat-stroked-button class="btn-confirm-no" (click)="dismissFeedback()">
+                        <mat-icon>close</mat-icon>
+                        Não
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="feedback-success" @fadeSlideIn>
+                <mat-icon>verified</mat-icon>
+                <span>Obrigado pelo seu feedback médico!</span>
+              </div>
+            }
+
+          </div>
+        }
+
+        <!-- Error State -->
+        @if (error() && !isAnalyzing()) {
+          <div class="error-state" @fadeSlideIn>
+            <mat-icon class="error-icon">cloud_off</mat-icon>
+            <p class="error-title">Erro na análise</p>
+            <p class="error-msg">{{ error() }}</p>
+          </div>
+        }
+
+        <!-- Empty State -->
+        @if (!result() && !isAnalyzing() && !error()) {
+          <div class="empty-state">
+            <div class="empty-icon-wrap">
+              <mat-icon>medical_information</mat-icon>
+            </div>
+            <p class="empty-title">Aguardando imagem</p>
+            <p class="empty-sub">
+              Carregue uma imagem de raio-X e clique em<br />
+              <strong>"Analisar Triagem"</strong> para obter o resultado.
+            </p>
+          </div>
+        }
+
+      </div>
+    </div>
+
+  </div>
+</div>

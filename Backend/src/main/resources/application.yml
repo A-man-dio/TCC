@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: raiox-backend
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/raiox_diagnostico?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:amandio1}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      pool-name: RaioXHikariPool
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQLDialect
+      hibernate.format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 12MB
+
+server:
+  port: 8080
+
+jwt:
+  secret: ${JWT_SECRET:raiox-secret-key-change-in-production-must-be-at-least-256-bits-long}
+  expiration-ms: 3600000
+  refresh-expiration-ms: 604800000
+
+python-ai:
+  base-url: ${PYTHON_AI_URL:http://localhost:8000}
+  timeout-ms: 30000
+
+storage:
+  provider: local
+  local:
+    root: ./uploads
+  feedback:
+    root: ./feedback-data
+    fine-tune-threshold: 1000
+
+cors:
+  allowed-origins: http://localhost:4200
+
+rate-limit:
+  analysis-requests-per-minute: 10
+
+logging:
+  level:
+    com.diagnostico.raioxbackend: DEBUG
+    org.springframework.security: INFO

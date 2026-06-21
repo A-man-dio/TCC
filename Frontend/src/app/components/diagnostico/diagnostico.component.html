@@ -1,0 +1,289 @@
+<div class="tab-content">
+  <div class="panel-grid">
+
+    <!-- ── Left: Image Panel ── -->
+    <div class="panel image-panel">
+      <div class="panel-header">
+        <mat-icon class="panel-icon">biotech</mat-icon>
+        <div>
+          <h2>Imagem de Raio-X</h2>
+          <p>Carregue uma imagem para diagnóstico detalhado</p>
+        </div>
+      </div>
+
+      <div class="panel-body">
+
+        @if (!selectedImage()) {
+          <div
+            class="upload-zone"
+            [class.dragging]="isDragging()"
+            (click)="triggerFileInput()"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave()"
+            (drop)="onDrop($event)"
+          >
+            <input
+              type="file"
+              #fileInput
+              accept="image/png,image/jpeg,image/jpg"
+              class="hidden-input"
+              (change)="onFileSelected($event)"
+            />
+            <div class="upload-icon-wrap">
+              <mat-icon>cloud_upload</mat-icon>
+            </div>
+            <p class="upload-title">Arraste a imagem aqui</p>
+            <p class="upload-sub">ou <span class="link">clique para selecionar</span></p>
+            <div class="upload-formats">
+              <span>PNG</span><span>JPG</span><span>JPEG</span>
+              <span class="sep">·</span>
+              <span>Máx. 10 MB</span>
+            </div>
+          </div>
+        } @else {
+          <div class="image-frame">
+            <div class="image-wrapper">
+              <img [src]="selectedImage()" alt="Raio-X" class="xray-image" />
+            </div>
+            @if (isAnalyzing()) {
+              <div class="scan-beam"></div>
+              <div class="scan-overlay">
+                <div class="scan-label">
+                  <mat-icon>biotech</mat-icon>
+                  A diagnosticar...
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="image-actions">
+            <button
+              mat-stroked-button
+              class="btn-secondary"
+              (click)="triggerChangeInput()"
+              [disabled]="isAnalyzing()"
+            >
+              <mat-icon>swap_horiz</mat-icon>
+              Alterar Imagem
+            </button>
+            <input
+              type="file"
+              #changeInput
+              accept="image/png,image/jpeg,image/jpg"
+              class="hidden-input"
+              (change)="onFileSelected($event)"
+            />
+
+            @if (!isAnalyzing() && !result()) {
+              <button mat-flat-button class="btn-analyze" (click)="analyze()">
+                <mat-icon>analytics</mat-icon>
+                Diagnosticar
+              </button>
+            }
+
+            @if (result() || error()) {
+              <button mat-stroked-button class="btn-reset" (click)="reset()">
+                <mat-icon>refresh</mat-icon>
+                Nova Análise
+              </button>
+            }
+          </div>
+        }
+
+      </div>
+    </div>
+
+    <!-- ── Right: Results Panel ── -->
+    <div class="panel results-panel">
+      <div class="panel-header">
+        <mat-icon class="panel-icon">summarize</mat-icon>
+        <div>
+          <h2>Diagnóstico Detalhado</h2>
+          <p>Probabilidade por condição</p>
+        </div>
+      </div>
+
+      <div class="panel-body">
+
+        <!-- Loading -->
+        @if (isAnalyzing()) {
+          <div class="loading-state" @fadeSlideIn>
+            <div class="pulse-container">
+              <div class="pulse-ring ring-1"></div>
+              <div class="pulse-ring ring-2"></div>
+              <mat-icon class="loading-icon">biotech</mat-icon>
+            </div>
+            <p class="loading-title">A processar diagnóstico</p>
+            <p class="loading-sub">Identificando padrões e anomalias...</p>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
+        }
+
+        <!-- Result -->
+        @if (result() && !isAnalyzing()) {
+          <div class="result-container" @fadeSlideIn>
+
+            <!-- Primary Diagnosis Banner -->
+            <div class="primary-banner" [ngClass]="'color-' + result()!.primaryDiagnosis.colorKey">
+              <div class="primary-icon-wrap">
+                <mat-icon>{{ result()!.primaryDiagnosis.icon }}</mat-icon>
+              </div>
+              <div class="primary-text">
+                <span class="primary-label">Diagnóstico Primário</span>
+                <span class="primary-name">{{ result()!.primaryDiagnosis.name }}</span>
+              </div>
+              <div class="primary-meta">
+                <span class="primary-prob">{{ result()!.primaryDiagnosis.probability }}%</span>
+                <span class="severity-badge" [ngClass]="'sev-' + result()!.primaryDiagnosis.severity">
+                  {{ getSeverityLabel(result()!.primaryDiagnosis.severity) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Probability Bars -->
+            <div class="prob-section">
+              <h3 class="prob-title">
+                <mat-icon>bar_chart</mat-icon>
+                Probabilidades por Condição
+              </h3>
+
+              <div class="prob-list">
+                @for (disease of result()!.probabilities; track trackByName($index, disease)) {
+                  <div class="prob-item" @barGrow>
+                    <div class="prob-header">
+                      <div class="prob-name">
+                        <mat-icon class="prob-icon" [ngClass]="'icon-' + disease.colorKey">
+                          {{ disease.icon }}
+                        </mat-icon>
+                        <span>{{ disease.name }}</span>
+                      </div>
+                      <span class="prob-value" [ngClass]="'color-text-' + disease.colorKey">
+                        {{ disease.probability }}%
+                      </span>
+                    </div>
+                    <div class="prob-bar-track">
+                      <div
+                        class="prob-bar-fill"
+                        [ngClass]="'fill-' + disease.colorKey"
+                        [style.width]="animateBars() ? disease.probability + '%' : '0%'"
+                      ></div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Meta Info -->
+            <div class="detail-grid">
+              <div class="detail-item">
+                <mat-icon>calendar_today</mat-icon>
+                <div>
+                  <span class="detail-label">Data</span>
+                  <span class="detail-value">{{ result()!.timestamp | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </div>
+              <div class="detail-item">
+                <mat-icon>schedule</mat-icon>
+                <div>
+                  <span class="detail-label">Hora</span>
+                  <span class="detail-value">{{ result()!.timestamp | date:'HH:mm:ss' }}</span>
+                </div>
+              </div>
+            </div>
+
+            @if (result()!.primaryDiagnosis.name !== 'Normal') {
+              <div class="warning-note">
+                <mat-icon>medical_services</mat-icon>
+                <p>Este resultado é uma <strong>análise preliminar automatizada</strong>. Consulte um médico especialista para diagnóstico definitivo.</p>
+              </div>
+            }
+
+            <!-- Feedback -->
+            @if (!feedbackSubmitted()) {
+              <div class="feedback-section">
+                <button
+                  class="feedback-trigger"
+                  [class.active]="showFeedback()"
+                  (click)="toggleFeedback()"
+                >
+                  <mat-icon>feedback</mat-icon>
+                  <span>Acha que a previsão está errada?</span>
+                  <mat-icon class="chevron">{{ showFeedback() ? 'expand_less' : 'expand_more' }}</mat-icon>
+                </button>
+
+                @if (showFeedback()) {
+                  <div class="feedback-panel" @slideDown>
+                    <p class="feedback-question">
+                      Assinale as condições <strong>realmente presentes</strong> na imagem:
+                    </p>
+                    <p class="feedback-hint">Pode selecionar mais de uma opção</p>
+
+                    <div class="disease-checkboxes">
+                      @for (disease of allDiseases; track disease) {
+                        <button
+                          class="disease-check"
+                          [class.checked]="isDiseaseSelected(disease)"
+                          [class.disabled]="isDisabled(disease)"
+                          (click)="toggleDisease(disease)"
+                        >
+                          <mat-icon>
+                            {{ isDiseaseSelected(disease) ? 'check_box' : 'check_box_outline_blank' }}
+                          </mat-icon>
+                          <span>{{ disease }}</span>
+                          @if (isDisabled(disease)) {
+                            <span class="exclusive-hint">exclusivo</span>
+                          }
+                        </button>
+                      }
+                    </div>
+
+                    <button
+                      mat-flat-button
+                      class="btn-submit-feedback"
+                      [disabled]="!hasAnyFeedback()"
+                      (click)="submitFeedback()"
+                    >
+                      <mat-icon>send</mat-icon>
+                      Enviar Feedback
+                    </button>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="feedback-success" @fadeSlideIn>
+                <mat-icon>verified</mat-icon>
+                <span>Obrigado pelo seu feedback médico!</span>
+              </div>
+            }
+
+          </div>
+        }
+
+        <!-- Error State -->
+        @if (error() && !isAnalyzing()) {
+          <div class="error-state" @fadeSlideIn>
+            <mat-icon class="error-icon">cloud_off</mat-icon>
+            <p class="error-title">Erro na análise</p>
+            <p class="error-msg">{{ error() }}</p>
+          </div>
+        }
+
+        <!-- Empty State -->
+        @if (!result() && !isAnalyzing() && !error()) {
+          <div class="empty-state">
+            <div class="empty-icon-wrap">
+              <mat-icon>biotech</mat-icon>
+            </div>
+            <p class="empty-title">Aguardando imagem</p>
+            <p class="empty-sub">
+              Carregue uma imagem de raio-X e clique em<br />
+              <strong>"Diagnosticar"</strong> para obter as probabilidades.
+            </p>
+          </div>
+        }
+
+      </div>
+    </div>
+
+  </div>
+</div>
